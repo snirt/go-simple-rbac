@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package rbac;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+message Role {
+  string name = 1;
+  // Add any other fields specific to a role
+}
+
+message RoleBinding {
+  string id = 1;
+  string roleId = 2;
+  string userId = 3;
+  // Add any other fields specific to a role binding
+}
+
+message User {
+  string id = 1;
+  // Add any other fields specific to a user
+}
+
+message Organization {
+  string id = 1;
+  // Add any other fields specific to an organization
+}
+
+message Project {
+  string id = 1;
+  // Add any other fields specific to a project
+}
+
+message Environment {
+  string id = 1;
+  // Add any other fields specific to an environment
+}
+
+message Permission {
+  // Define your permission fields here
+}
+
+message CanUserPerformActionRequest {
+  string userId = 1;
+  Resource resource = 2;
+  Permission permission = 3;
+}
+
+message CanUserPerformActionResponse {
+  bool canPerform = 1;
+}
+
+message GetUsersPermissionsForResourceRequest {
+  string userId = 1;
+  Resource resource = 2;
+}
+
+message GetUsersPermissionsForResourceResponse {
+  map<Permission, google.protobuf.Empty> permissions = 1;
+}
+
+message Resource {
+  // Define your resource fields here
+}
+
+service RBACService {
+  rpc CreateRole(Role) returns (google.protobuf.Empty);
+  rpc GetRole(google.protobuf.StringValue) returns (Role);
+  rpc GetRoles(google.protobuf.Empty) returns (map<string, Role>);
+  rpc AddRoleBinding(RoleBinding) returns (google.protobuf.Empty);
+  rpc ModifyUserRole(ModifyUserRoleRequest) returns (google.protobuf.Empty);
+  rpc GetRoleBinding(google.protobuf.StringValue) returns (RoleBinding);
+  rpc RemoveRoleBinding(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc CanUserPerformAction(CanUserPerformActionRequest) returns (CanUserPerformActionResponse);
+  rpc CreateUser(User) returns (google.protobuf.Empty);
+  rpc GetUser(google.protobuf.StringValue) returns (User);
+  rpc GetUsersPermissionsForResource(GetUsersPermissionsForResourceRequest) returns (GetUsersPermissionsForResourceResponse);
+  rpc CreateOrganization(Organization) returns (google.protobuf.Empty);
+  rpc AddUserToOrganization(AddUserToOrganizationRequest) returns (google.protobuf.Empty);
+  rpc RemoveUserFromOrganization(RemoveUserFromOrganizationRequest) returns (google.protobuf.Empty);
+  rpc CreateProjInOrg(CreateProjInOrgRequest) returns (google.protobuf.Empty);
+  rpc GetProject(google.protobuf.StringValue) returns (Project);
+  rpc DeleteProjFromOrg(DeleteProjFromOrgRequest) returns (google.protobuf.Empty);
+  rpc CreateEnvInProj(CreateEnvInProjRequest) returns (google.protobuf.Empty);
+  rpc GetEnvironment(google.protobuf.StringValue) returns (Environment);
+  rpc UpdateEnvironment(Environment) returns (google.protobuf.Empty);
+}
+
+message ModifyUserRoleRequest {
+  string userId = 1;
+  Resource resource = 2;
+  RoleName role = 3;
+}
+
+message AddUserToOrganizationRequest {
+  string userId = 1;
+  string organizationId = 2;
+}
+
+message RemoveUserFromOrganizationRequest {
+  string userId = 1;
+  string organizationId = 2;
+}
+
+message CreateProjInOrgRequest {
+  Project project = 1;
+  string organizationId = 2;
+}
+
+message DeleteProjFromOrgRequest {
+  string moderatorId = 1;
+  string organizationId = 2;
+  string projectId = 3;
+}
+
+message CreateEnvInProjRequest {
+  Environment environment = 1;
+  string projectId = 2;
+}
